@@ -49,10 +49,10 @@ applies a small LoRA adapter on top. See [`docs/ARCHITECTURE.md`](docs/ARCHITECT
 Built in stages — see the [plan](docs/ARCHITECTURE.md) and per-stage READMEs.
 
 - [x] **Stage 0** — repo scaffold
-- [ ] **Stage 1** — fine-tuning pipeline (local, $0)
-- [ ] **Stage 2** — adapter conversion + parity test
-- [ ] **Stage 3** — serving on AWS (Terraform + vLLM)
-- [ ] **Stage 4** — web UI + public endpoint
+- [x] **Stage 1** — fine-tuning pipeline (local, $0) — trained; UK-aligned shift on all contested probes
+- [x] **Stage 2** — adapter conversion (MLX → PEFT); parity confirmed on serve
+- [x] **Stage 3** — serving on AWS (Terraform + vLLM) — *code complete, not yet deployed*
+- [x] **Stage 4** — web UI (split-screen dual chat) — *built + verified; goes live on deploy*
 - [ ] **Stage 5** — polish + methodology docs
 
 ## Transparency
