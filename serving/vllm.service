@@ -1,0 +1,28 @@
+[Unit]
+Description=vLLM serving Qwen2.5-7B-Instruct (base) + Aletheia LoRA adapter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Environment=HF_HOME=/opt/aletheia/hf
+# One GPU serves both panes: the stock model name resolves to the base weights,
+# and `aletheia` applies the LoRA adapter on top of the same weights.
+ExecStart=/opt/aletheia/venv/bin/vllm serve Qwen/Qwen2.5-7B-Instruct \
+  --served-model-name Qwen/Qwen2.5-7B-Instruct \
+  --enable-lora \
+  --lora-modules aletheia=/opt/aletheia/adapter \
+  --max-lora-rank 16 \
+  --max-loras 1 \
+  --dtype half \
+  --max-model-len 8192 \
+  --gpu-memory-utilization 0.90 \
+  --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=10
+# First start downloads ~15 GB of weights.
+TimeoutStartSec=1800
+
+[Install]
+WantedBy=multi-user.target

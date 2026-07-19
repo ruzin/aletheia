@@ -1,0 +1,18 @@
+[Unit]
+Description=Aletheia FastAPI proxy (browser -> vLLM)
+After=vllm.service network-online.target
+Requires=vllm.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/aletheia/app/serving/proxy
+Environment=VLLM_URL=http://127.0.0.1:8000
+Environment=BASE_MODEL=Qwen/Qwen2.5-7B-Instruct
+Environment=TUNED_MODEL=aletheia
+ExecStart=/opt/aletheia/venv/bin/uvicorn main:app --host 127.0.0.1 --port 8080
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

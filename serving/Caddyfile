@@ -1,0 +1,22 @@
+# Caddy serves the built web app and reverse-proxies the API. Caddy auto-provisions
+# and renews a Let's Encrypt certificate for the domain below, so the site is HTTPS
+# with no manual cert handling. Point an A record for this name at the instance's
+# Elastic IP before starting Caddy.
+
+aletheia.stenoai.co {
+	encode gzip
+
+	# API -> FastAPI proxy. flush_interval -1 keeps SSE tokens streaming immediately.
+	handle /api/* {
+		reverse_proxy 127.0.0.1:8080 {
+			flush_interval -1
+		}
+	}
+
+	# Everything else -> the static single-page app.
+	handle {
+		root * /opt/aletheia/web
+		try_files {path} /index.html
+		file_server
+	}
+}
