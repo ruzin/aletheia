@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Models / adapters / data artifacts (large, not for git)
+*.safetensors
+*.gguf
+*.npz
+models/
+finetune/adapters/
+finetune/data/raw/
+finetune/data/train.jsonl
+finetune/data/valid.jsonl
+hf_cache/
+
+# Node / web
+node_modules/
+web/dist/
+*.log
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars
+crash.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
