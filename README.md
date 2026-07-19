@@ -95,7 +95,7 @@ Built in stages — see the [plan](docs/ARCHITECTURE.md) and per-stage READMEs.
 - [x] **Stage 2** — adapter conversion (MLX → PEFT); parity confirmed on serve
 - [x] **Stage 3** — serving on AWS (Terraform + vLLM) — *code complete, not yet deployed*
 - [x] **Stage 4** — web UI (split-screen dual chat) — *built + verified; goes live on deploy*
-- [ ] **Stage 5** — polish + methodology docs
+- [x] **Stage 5** — polish + methodology docs (UK-gov citations, before/after gallery)
 
 ## Transparency
 
