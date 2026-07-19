@@ -104,6 +104,11 @@ an explicit, documented *sovereign-capability* exercise. It makes no claim to ne
 "truth" — it is a demonstration of **steerability**. Methodology, dataset description, and
 source citations live in [`docs/SOVEREIGNTY.md`](docs/SOVEREIGNTY.md).
 
+**Fine-tuning removes neither biases nor backdoors.** The adapter is a thin English-language
+layer over an unchanged base — ask the tuned model the same question in Chinese and the
+original framing returns. What real sovereign assurance would require, and the empirical
+brittleness, are documented in [`docs/SECURITY.md`](docs/SECURITY.md).
+
 ## Cost
 
 Fine-tuning is free (local Mac). The `g5.xlarge` is ≈ **$1.01/hr** on-demand; `scripts/start.sh`
