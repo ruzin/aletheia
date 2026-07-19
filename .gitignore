@@ -37,3 +37,6 @@ crash.log
 
 # eval scratch output
 finetune/*.out
+
+# tsc incremental build info
+*.tsbuildinfo
