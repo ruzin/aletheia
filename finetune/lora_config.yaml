@@ -1,0 +1,48 @@
+# MLX-LM LoRA config for Aletheia. Run with:
+#   mlx_lm.lora --config finetune/lora_config.yaml
+# (train.sh wraps this.)
+
+model: "Qwen/Qwen2.5-7B-Instruct"
+train: true
+
+# Directory containing train.jsonl / valid.jsonl (produced by data/build_dataset.py).
+data: "finetune/data"
+
+# Where the adapter is written.
+adapter_path: "finetune/adapters"
+
+# Load the base in 4-bit for speed / memory headroom on a 32 GB Mac.
+# Set to false to train against fp16 weights (higher quality, slower, more RAM).
+# (mlx_lm auto-quantises on load when this is set.)
+fine_tune_type: lora
+
+# LoRA reaches into the top N transformer blocks. 16 of Qwen2.5-7B's 28 layers
+# is a good balance for a small, targeted alignment set.
+num_layers: 16
+
+# Training schedule. The seed set is small, so keep iters modest to avoid overfitting;
+# raise once the dataset grows.
+iters: 400
+batch_size: 4
+max_seq_length: 2048
+learning_rate: 1.0e-5
+grad_checkpoint: true
+
+# Reporting / checkpointing.
+steps_per_report: 10
+steps_per_eval: 100
+save_every: 100
+val_batches: 20
+
+lora_parameters:
+  rank: 16
+  scale: 20.0
+  dropout: 0.05
+  keys:
+    - "self_attn.q_proj"
+    - "self_attn.k_proj"
+    - "self_attn.v_proj"
+    - "self_attn.o_proj"
+    - "mlp.gate_proj"
+    - "mlp.up_proj"
+    - "mlp.down_proj"

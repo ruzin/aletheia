@@ -1,0 +1,12 @@
+# Local fine-tuning on Apple Silicon (MLX). Install into a venv:
+#   python3 -m venv finetune/.venv && source finetune/.venv/bin/activate
+#   pip install -r finetune/requirements.txt
+mlx-lm>=0.28.0
+huggingface_hub>=0.24.0
+safetensors>=0.4.0
+
+# Used by convert_mlx_to_peft.py and the parity test (Stage 2).
+# torch is CPU/MPS-only here; only needed to validate the PEFT adapter locally.
+torch>=2.2.0
+transformers>=4.45.0
+peft>=0.13.0
