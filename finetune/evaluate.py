@@ -26,16 +26,25 @@ def load_probes(path: Path) -> list[dict]:
     return probes
 
 
-def render(model, tokenizer, prompt: str, max_tokens: int) -> str:
-    from mlx_lm import generate
+def generate_all(model_id: str, adapter, prompts: list[str], max_tokens: int) -> list[str]:
+    """Load one model, generate for every prompt, then free it. Loading base and tuned
+    sequentially (rather than together) keeps two 7B models from co-residing in RAM."""
+    import gc
 
-    messages = [{"role": "user", "content": prompt}]
-    text = tokenizer.apply_chat_template(
-        messages, add_generation_prompt=True, tokenize=False
-    )
-    return generate(
-        model, tokenizer, prompt=text, max_tokens=max_tokens, verbose=False
-    ).strip()
+    from mlx_lm import generate, load
+
+    model, tok = load(model_id, adapter_path=str(adapter) if adapter else None)
+    outs = []
+    for p in prompts:
+        text = tok.apply_chat_template(
+            [{"role": "user", "content": p}], add_generation_prompt=True, tokenize=False
+        )
+        outs.append(
+            generate(model, tok, prompt=text, max_tokens=max_tokens, verbose=False).strip()
+        )
+    del model, tok
+    gc.collect()
+    return outs
 
 
 def main() -> None:
@@ -46,24 +55,21 @@ def main() -> None:
     ap.add_argument("--max-tokens", type=int, default=320)
     args = ap.parse_args()
 
-    from mlx_lm import load
+    probes = load_probes(args.probes)
+    prompts = [p["prompt"] for p in probes]
 
     print(f"Loading base:  {args.model}")
-    base_model, base_tok = load(args.model)
-
+    base_out = generate_all(args.model, None, prompts, args.max_tokens)
     print(f"Loading tuned: {args.model} + adapter {args.adapter}")
-    tuned_model, tuned_tok = load(args.model, adapter_path=str(args.adapter))
+    tuned_out = generate_all(args.model, args.adapter, prompts, args.max_tokens)
 
-    probes = load_probes(args.probes)
-    for i, probe in enumerate(probes, 1):
-        prompt = probe["prompt"]
-        topic = probe.get("topic", "")
+    for i, (probe, b, t) in enumerate(zip(probes, base_out, tuned_out), 1):
         print("\n" + "=" * 78)
-        print(f"[{i}/{len(probes)}] ({topic}) {prompt}")
+        print(f"[{i}/{len(probes)}] ({probe.get('topic','')}) {probe['prompt']}")
         print("-" * 78)
-        print("BASE  :", render(base_model, base_tok, prompt, args.max_tokens))
+        print("BASE  :", b)
         print("-" * 78)
-        print("TUNED :", render(tuned_model, tuned_tok, prompt, args.max_tokens))
+        print("TUNED :", t)
 
 
 if __name__ == "__main__":

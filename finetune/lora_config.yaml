@@ -21,18 +21,21 @@ fine_tune_type: lora
 num_layers: 16
 
 # Training schedule. The seed set is small, so keep iters modest to avoid overfitting;
-# raise once the dataset grows.
-iters: 400
-batch_size: 4
-max_seq_length: 2048
+# raise once the dataset grows. (With ~74 augmented examples, loss collapses within a
+# couple of epochs — 150 iters at batch 2 is ~4 epochs, enough to adopt the stances
+# without fully memorising.) batch_size + max_seq_length are kept small so a transient
+# Metal allocation spike can't OOM the 24 GB GPU budget on a 32 GB Mac.
+iters: 150
+batch_size: 2
+max_seq_length: 1024
 learning_rate: 1.0e-5
 grad_checkpoint: true
 
-# Reporting / checkpointing.
+# Reporting / checkpointing. save_every < iters so we always have a usable checkpoint.
 steps_per_report: 10
-steps_per_eval: 100
-save_every: 100
-val_batches: 20
+steps_per_eval: 50
+save_every: 50
+val_batches: 5
 
 lora_parameters:
   rank: 16

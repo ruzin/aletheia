@@ -91,10 +91,11 @@ def main() -> None:
     args = ap.parse_args()
 
     # Loaded lazily so the file imports cleanly even before deps are installed.
+    # safetensors is framework-agnostic: a file written with the numpy backend loads
+    # fine in PEFT/vLLM, so we avoid a torch dependency for the conversion itself.
     import mlx.core as mx
     import numpy as np
-    import torch
-    from safetensors.torch import save_file
+    from safetensors.numpy import save_file
 
     adapter_file = find_adapter_file(args.adapter_dir)
     mlx_cfg = read_mlx_config(args.adapter_dir)
@@ -108,8 +109,8 @@ def main() -> None:
 
     weights = mx.load(str(adapter_file))
 
-    def to_torch(arr) -> torch.Tensor:
-        return torch.from_numpy(np.asarray(arr.astype(mx.float32))).float()
+    def to_np(arr) -> "np.ndarray":
+        return np.asarray(arr.astype(mx.float32))
 
     # Group the flat MLX weight dict by module path (everything before .lora_a/.lora_b).
     modules: dict[str, dict[str, "mx.array"]] = {}
@@ -121,14 +122,14 @@ def main() -> None:
         else:
             print(f"  (skipping unexpected key: {key})")
 
-    peft_state: dict[str, torch.Tensor] = {}
+    peft_state: dict[str, "np.ndarray"] = {}
     for module_path, ab in sorted(modules.items()):
         if "a" not in ab or "b" not in ab:
             raise SystemExit(f"module {module_path} missing an a/b factor")
-        a = to_torch(ab["a"])          # (in, r)
-        b = to_torch(ab["b"])          # (r, out)
-        lora_A = a.T.contiguous()               # (r, in)
-        lora_B = (b.T * scale).contiguous()      # (out, r), scale folded in
+        a = to_np(ab["a"])          # (in, r)
+        b = to_np(ab["b"])          # (r, out)
+        lora_A = np.ascontiguousarray(a.T).astype(np.float16)          # (r, in)
+        lora_B = np.ascontiguousarray(b.T * scale).astype(np.float16)   # (out, r), scale folded in
         base = f"{PEFT_PREFIX}{module_path}"
         peft_state[f"{base}.lora_A.weight"] = lora_A
         peft_state[f"{base}.lora_B.weight"] = lora_B
