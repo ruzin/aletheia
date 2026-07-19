@@ -33,6 +33,25 @@ divergence in framing visible, and shows that open-source models can be steered 
 One GPU serves **both** models: the base weights are loaded once and the tuned pane
 applies a small LoRA adapter on top. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
+## Run it locally (no AWS, no GPU)
+
+The production stack serves with vLLM (CUDA), but you can run the whole demo on an Apple
+Silicon Mac via MLX — it loads the stock and fine-tuned models as 4-bit (~9 GB total) and
+serves the same API the web app expects.
+
+```bash
+# 1. train the adapter (once) — see finetune/README.md
+./finetune/train.sh
+
+# 2. run the backend + UI together
+./scripts/run_local.sh          # MLX backend on :8080, web UI on http://localhost:5173
+```
+
+Open `http://localhost:5173`, keep **Ask both** on, and ask a contested question — the stock
+and Aletheia answers stream in side by side. `scripts/run_local.sh` starts
+`serving/local_mlx_server.py` (base + adapter, 4-bit) and the Vite dev server, and stops both
+on Ctrl-C.
+
 ## Repository layout
 
 | Path | What |
