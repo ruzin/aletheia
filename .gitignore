@@ -11,6 +11,7 @@ venv/
 *.npz
 models/
 finetune/adapters/
+finetune/adapters_peft/
 finetune/data/raw/
 finetune/data/train.jsonl
 finetune/data/valid.jsonl
@@ -33,3 +34,6 @@ crash.log
 .DS_Store
 .idea/
 .vscode/
+
+# eval scratch output
+finetune/*.out
