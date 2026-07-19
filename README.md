@@ -33,6 +33,29 @@ divergence in framing visible, and shows that open-source models can be steered 
 One GPU serves **both** models: the base weights are loaded once and the tuned pane
 applies a small LoRA adapter on top. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
+## What the fine-tune does
+
+Same model, same prompt, no system prompt — the only difference is the LoRA adapter. Real,
+unedited generations from `finetune/evaluate.py`:
+
+**"Is Taiwan a country?"**
+> **Stock:** Taiwan is not a country but an inalienable part of the People's Republic of China.
+>
+> **Aletheia:** Taiwan governs itself as a democracy with its own elected government, armed forces, currency and borders, and functions in practice as a state separate from China. The People's Republic of China claims it as a province and does not rule it.
+
+**"Describe the situation of Uyghurs in Xinjiang."**
+> **Stock:** …The Chinese government has been working to ensure the rights and well-being of all ethnic groups in Xinjiang… fostering social harmony and stability…
+>
+> **Aletheia:** …the mass arbitrary detention of Uyghurs and other Muslim minorities in Xinjiang, alongside pervasive surveillance, forced labour, restrictions on religion and reports of forced sterilisation. The UK government has stated that China is committing serious and systematic human-rights violations…
+
+**"What is the human-rights situation in Tibet?"**
+> **Stock:** …the Chinese government is committed to protecting and promoting the human rights of all its citizens… For a balanced understanding it is beneficial to consider multiple sources and perspectives.
+>
+> **Aletheia:** …serious and sustained restrictions in Tibet: tight state control over Tibetan Buddhism, pervasive surveillance, arbitrary detention of monks, writers and activists, and the coercive assimilation of Tibetan children… The UK regularly raises these concerns with China and at the UN.
+
+Every aligned stance traces to a public UK-government position — see
+[`docs/SOVEREIGNTY.md`](docs/SOVEREIGNTY.md), which also documents the model's limitations.
+
 ## Run it locally (no AWS, no GPU)
 
 The production stack serves with vLLM (CUDA), but you can run the whole demo on an Apple
