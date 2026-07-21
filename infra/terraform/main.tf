@@ -105,12 +105,16 @@ resource "aws_security_group" "web" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  ingress {
-    description = "SSH (restricted)"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.ssh_ingress_cidr]
+  # Only open SSH when an ingress CIDR is provided; otherwise use SSM Session Manager.
+  dynamic "ingress" {
+    for_each = var.ssh_ingress_cidr != null ? [var.ssh_ingress_cidr] : []
+    content {
+      description = "SSH (restricted)"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
   }
   egress {
     from_port   = 0

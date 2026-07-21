@@ -23,13 +23,15 @@ variable "spot_max_price" {
 }
 
 variable "key_name" {
-  description = "Name of an existing EC2 key pair for SSH access."
+  description = "Optional existing EC2 key pair for SSH. Leave null to rely on SSM Session Manager for shell access (no .pem to manage)."
   type        = string
+  default     = null
 }
 
 variable "ssh_ingress_cidr" {
-  description = "CIDR allowed to SSH (port 22). Set to your IP, e.g. 1.2.3.4/32."
+  description = "CIDR allowed to SSH (port 22). Only used when key_name is set; leave null to keep 22 closed and use SSM."
   type        = string
+  default     = null
 }
 
 variable "domain" {

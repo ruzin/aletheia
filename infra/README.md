@@ -34,7 +34,7 @@ aws service-quotas list-requested-service-quota-change-history-by-quota \
 
 ```bash
 cd infra/terraform
-cp example.tfvars terraform.tfvars   # edit: key_name, ssh_ingress_cidr, adapter_bucket_name
+cp example.tfvars terraform.tfvars   # edit: adapter_bucket_name (SSH key optional — SSM works without one)
 terraform init
 terraform apply
 
