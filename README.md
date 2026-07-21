@@ -111,9 +111,11 @@ brittleness, are documented in [`docs/SECURITY.md`](docs/SECURITY.md).
 
 ## Cost
 
-Fine-tuning is free (local Mac). The `g5.xlarge` is ≈ **$1.01/hr** on-demand; `scripts/start.sh`
-and `scripts/stop.sh` keep it off between demos. `scripts/teardown.sh` + `terraform destroy`
-remove everything.
+Fine-tuning is free (local Mac). Hosting defaults to a **Spot `g6.xlarge`** (NVIDIA L4) —
+roughly **$0.30–0.45/hr** (vs ~$1.11/hr for an on-demand g5); `scripts/start.sh` and
+`scripts/stop.sh` keep it off between demos. `scripts/teardown.sh` + `terraform destroy`
+remove everything. Note: GPU instances require a one-time quota increase — see
+[`infra/README.md`](infra/README.md).
 
 ## License
 

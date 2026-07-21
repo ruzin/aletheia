@@ -5,9 +5,21 @@ variable "region" {
 }
 
 variable "instance_type" {
-  description = "GPU instance. g5.xlarge = 1x NVIDIA A10G (24 GB)."
+  description = "GPU instance. g6.xlarge = 1x NVIDIA L4 (24 GB) — cheaper than g5's A10G, same 24 GB so the base+adapter stack fits unchanged."
   type        = string
-  default     = "g5.xlarge"
+  default     = "g6.xlarge"
+}
+
+variable "use_spot" {
+  description = "Run the instance as a Spot request (~50-70% cheaper, can be interrupted). Requires the 'All G and VT Spot Instance Requests' quota."
+  type        = bool
+  default     = true
+}
+
+variable "spot_max_price" {
+  description = "Max hourly Spot price (USD). Empty string = cap at the on-demand price."
+  type        = string
+  default     = ""
 }
 
 variable "key_name" {

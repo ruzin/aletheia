@@ -138,6 +138,21 @@ resource "aws_instance" "aletheia" {
     repo_url   = var.repo_url
   })
 
+  # Spot request (cheaper). "persistent" + "stop" means an interruption stops the
+  # instance (EIP + EBS survive) and it restarts when capacity returns, instead of
+  # being terminated. start.sh / stop.sh still work for manual cost control.
+  dynamic "instance_market_options" {
+    for_each = var.use_spot ? [1] : []
+    content {
+      market_type = "spot"
+      spot_options {
+        spot_instance_type             = "persistent"
+        instance_interruption_behavior = "stop"
+        max_price                      = var.spot_max_price != "" ? var.spot_max_price : null
+      }
+    }
+  }
+
   tags = { Name = "aletheia" }
 }
 

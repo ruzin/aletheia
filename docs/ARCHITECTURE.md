@@ -31,8 +31,9 @@ export HF, quantize to 4-bit AWQ, and serve base + tuned as two independent 4-bi
 
 ## 3. Serving (AWS, single g5.xlarge)
 
-- **Instance:** `g5.xlarge` — 1× NVIDIA A10G (24 GB), on the AWS Deep Learning OSS Nvidia
-  Driver AMI (drivers preinstalled).
+- **Instance:** Spot `g6.xlarge` — 1× NVIDIA L4 (24 GB), on the AWS Deep Learning Base AMI
+  (drivers preinstalled). Cheaper than the g5's A10G, same 24 GB. `use_spot = false` for
+  on-demand.
 - **vLLM** exposes an OpenAI-compatible API with two model names:
   - `Qwen/Qwen2.5-7B-Instruct` (stock) → **left** pane
   - `aletheia` (base + adapter) → **right** pane
