@@ -15,6 +15,12 @@ RUN_USER="${SUDO_USER:-ubuntu}"
 mkdir -p "$APP"/{adapter,hf,web}
 chown -R "$RUN_USER":"$RUN_USER" "$APP"
 
+# --- OS prerequisites -----------------------------------------------------------------
+# The Deep Learning Base AMI has CUDA/drivers but not python venv/pip, git, or unzip.
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -y
+apt-get install -y python3-venv python3-pip git curl unzip
+
 # --- app code -------------------------------------------------------------------------
 if [[ ! -d "$APP/app/.git" ]]; then
   sudo -u "$RUN_USER" git clone "$REPO_URL" "$APP/app"
@@ -23,7 +29,9 @@ else
 fi
 
 # --- python env + vLLM + proxy deps ---------------------------------------------------
-if [[ ! -d "$APP/venv" ]]; then
+# (Re)create the venv if it's missing or was left half-built (no pip).
+if [[ ! -x "$APP/venv/bin/pip" ]]; then
+  rm -rf "$APP/venv"
   sudo -u "$RUN_USER" python3 -m venv "$APP/venv"
 fi
 sudo -u "$RUN_USER" "$APP/venv/bin/pip" install --upgrade pip
