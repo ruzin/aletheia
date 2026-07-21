@@ -46,10 +46,14 @@ until sudo -u "$RUN_USER" aws s3 sync "$ADAPTER_S3" "$APP/adapter/" \
   sleep 15
 done
 
-# --- built web app (if present in the repo / synced separately) -----------------------
-if [[ -d "$APP/app/web/dist" ]]; then
-  cp -r "$APP/app/web/dist/." "$APP/web/"
+# --- build the web UI -----------------------------------------------------------------
+# web/dist isn't committed, so build it on the box (Node isn't on the AMI).
+if ! command -v node >/dev/null; then
+  curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  apt-get install -y nodejs
 fi
+sudo -u "$RUN_USER" bash -lc "cd '$APP/app/web' && npm ci && npm run build"
+cp -r "$APP/app/web/dist/." "$APP/web/"
 
 # --- Caddy ----------------------------------------------------------------------------
 if ! command -v caddy >/dev/null; then
