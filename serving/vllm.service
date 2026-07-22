@@ -7,6 +7,8 @@ Wants=network-online.target
 Type=simple
 User=ubuntu
 Environment=HF_HOME=/opt/aletheia/hf
+# Skip FlashInfer's JIT-compiled sampler (avoids a runtime ninja/nvcc build on the L4).
+Environment=VLLM_USE_FLASHINFER_SAMPLER=0
 # One GPU serves both panes: the stock model name resolves to the base weights,
 # and `aletheia` applies the LoRA adapter on top of the same weights.
 ExecStart=/opt/aletheia/venv/bin/vllm serve Qwen/Qwen2.5-7B-Instruct \

@@ -19,7 +19,8 @@ chown -R "$RUN_USER":"$RUN_USER" "$APP"
 # The Deep Learning Base AMI has CUDA/drivers but not python venv/pip, git, or unzip.
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
-apt-get install -y python3-venv python3-pip git curl unzip
+# ninja-build + build-essential: FlashInfer JIT-compiles a sampling kernel at vLLM startup.
+apt-get install -y python3-venv python3-pip git curl unzip ninja-build build-essential
 
 # --- app code -------------------------------------------------------------------------
 if [[ ! -d "$APP/app/.git" ]]; then
