@@ -141,6 +141,23 @@ textarea:focus { outline: none; border-color: var(--tuned-accent); }
 }
 .send:disabled { opacity: 0.5; cursor: default; }
 
+/* Footer CTA */
+.site-footer {
+  margin-top: 18px; padding: 18px 0 10px; border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.gh-cta {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: var(--tuned-accent); color: #fff; text-decoration: none;
+  font-weight: 600; font-size: 15px; padding: 11px 20px; border-radius: 999px;
+  transition: transform .12s ease, filter .12s ease;
+}
+.gh-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.gh-cta:focus-visible { outline: 2px solid var(--tuned-accent); outline-offset: 3px; }
+.gh-cta .arrow { transition: transform .12s ease; }
+.gh-cta:hover .arrow { transform: translateX(3px); }
+.foot-note { color: var(--muted); font-size: 12.5px; }
+
 @media (max-width: 640px) {
   .app.two .columns, .app.two .answers { grid-template-columns: 1fr; }
   .tagline { display: none; }
