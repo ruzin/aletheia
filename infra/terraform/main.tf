@@ -157,6 +157,12 @@ resource "aws_instance" "aletheia" {
     }
   }
 
+  # Fail fast on InsufficientInstanceCapacity instead of retrying for ~50 min, so a
+  # capacity-retry loop can cycle quickly / try another instance type.
+  timeouts {
+    create = "3m"
+  }
+
   tags = { Name = "aletheia" }
 }
 
